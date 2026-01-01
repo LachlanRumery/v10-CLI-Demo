@@ -3,7 +3,7 @@ import prompts from "prompts";
 import { GetFramework } from "./lib/framework-check.js";
 import { GetStylingFramework } from "./lib/styling-check.js";
 import { CheckPathIsClear } from "./lib/path-check.js";
-import { AddTSReactVideoPlayer } from "./lib/insertion/react.js";
+import { AddReactVideoPlayer } from "./lib/insertion/react.js";
 import { InstallReactDependencies } from "./lib/dependencies/react.js";
 
 async function main() {
@@ -20,6 +20,16 @@ async function main() {
         { title: "HTML", value: "html" },
       ],
       initial: framework === "react" ? 0 : 1,
+    },
+    {
+      type: "select",
+      name: "language",
+      message: "Are you using Javascript or Typescript?",
+      choices: [
+        { title: "Javascript", value: "js" },
+        { title: "Typescript", value: "ts" }
+      ], 
+      initial: framework === "react" ? 1 : 0
     },
     {
       type: "select",
@@ -56,15 +66,10 @@ async function main() {
     return;
   }
 
-  if (!CheckPathIsClear()) {
-    console.error(
-      "app/components/VideoPlayer.jsx or app/components/VideoPlayer.tsx already exists.",
-    );
-    return;
+  if (responses.framework == "react") {
+    AddReactVideoPlayer(responses.language, responses.skin);
+    InstallReactDependencies();
   }
-
-  AddTSReactVideoPlayer();
-  InstallReactDependencies();
 }
 
 main();
